@@ -106,3 +106,11 @@ client_max_body_size 30M;
 ```
 sudo systemctl restart nginx
 ```
+
+
+docker-compose up --build
+
+
+docker-compose run --rm djangoapp python manage.py createsuperuser
+
+docker-compose run --rm djangoapp python manage.py startapp blog  
