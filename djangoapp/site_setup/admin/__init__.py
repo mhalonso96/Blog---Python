@@ -1,1 +1,1 @@
-from .menu_link_admin import *
+from .site_setup_admin import *
