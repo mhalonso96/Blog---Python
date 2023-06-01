@@ -1,1 +1,2 @@
-from .setup_models import *
+from .menu_link_models import *
+from .site_setup_models import *
