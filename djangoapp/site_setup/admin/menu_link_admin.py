@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.http.request import HttpRequest
 from site_setup.models import MenuLink, SiteSetup
 
 
@@ -11,4 +12,7 @@ class MenuLinkAdmin (admin.ModelAdmin):
 @admin.register(SiteSetup)
 class SiteSetupAdmin (admin.ModelAdmin):
     list_display = 'title', 'description'
+
+    def has_add_permission(self, request):
+        return not SiteSetup.objects.exists()
     
