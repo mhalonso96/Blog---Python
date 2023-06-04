@@ -297,10 +297,12 @@ html,
 .footer {
   background: hsl(var(--clr-gray-dk));
   color: hsl(var(--clr-white));
+  
 }
 
 .footer a {
   color: hsl(var(--clr-white));
+ 
 }
 
 .footer a:hover {
