@@ -15,6 +15,10 @@ class Tag(models.Model):
         blank= True,
         max_length= 255,
     )
+
+    def __str__(self):
+        return self.name
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = new_slugify(self.name, 5)
