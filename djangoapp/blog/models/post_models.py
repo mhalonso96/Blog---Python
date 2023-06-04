@@ -1,6 +1,8 @@
 from blog.models.category_models import Category
 from blog.models.tag_models import Tag
+from django.contrib.auth.models import User
 from django.db import models
+from utils.rands import new_slugify
 
 
 class Post(models.Model):
@@ -14,7 +16,7 @@ class Post(models.Model):
         default= "",
         null= False,
         blank= True,
-        max_length= 255
+        max_length= 255,
     )
     excerpt = models.CharField(max_length= 150)
     is_published = models.BooleanField(
@@ -28,17 +30,33 @@ class Post(models.Model):
     cover = models.ImageField(
         upload_to= 'post/%Y/%m/',
         blank= True,
-        default= ''
+        default= '',
     )
     cover_in_post_content = models.BooleanField(
         default= True,
-        help_text= 'Exibir a imagem de capa tambem dentro do conteudo do post?'
+        help_text= 'Exibir a imagem de capa tambem dentro do conteudo do post?',
     )
-    create_at = models.DateTimeField(
-        auto_now_add= True
+    created_at = models.DateTimeField(
+        auto_now_add= True,
     )
-    update_at = models.DateTimeField(
-        auto_now= True
+    created_by = models.ForeignKey(
+        User,
+        on_delete= models.SET_NULL,
+        blank= True,
+        null= True,
+        related_name= 'post_created_by',
+
+    )
+    updated_at = models.DateTimeField(
+        auto_now= True,
+    )
+    updated_by = models.ForeignKey(
+        User,
+        on_delete= models.SET_NULL,
+        blank= True,
+        null= True,
+        related_name= 'post_updated_by',
+
     )
     category = models.ForeignKey(
         Category,
@@ -49,7 +67,12 @@ class Post(models.Model):
     tags = models.ManyToManyField(
         Tag,
         blank= True,
-        default= ''
+        default= '',
     )
     def __str__(self):
         return self.title
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = new_slugify(self.title, 5)
+        return super().save(*args, **kwargs)
