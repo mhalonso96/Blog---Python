@@ -29,11 +29,14 @@ class CategoryAdmin(admin.ModelAdmin):
     }
 
 @admin.register(Page)
-class PageAdmin(admin.ModelAdmin):
-    list_display = 'id', 'title', 'slug',
+class PageAdmin(SummernoteModelAdmin):
+    summernote_fields = 'content',
+    list_display = 'id', 'title', 'is_published',
     list_display_links = 'title',
-    search_fields = 'id', 'title', 'slug',
+    search_fields = 'id', 'title', 'slug', 'content'
     list_per_page = 10
+    list_filter = 'is_published',
+    list_editable= 'is_published',
     ordering = '-id',
     prepopulated_fields = {
         "slug": ('title',),
