@@ -2,6 +2,7 @@ from blog.models.category_models import Category
 from blog.models.tag_models import Tag
 from django.contrib.auth.models import User
 from django.db import models
+from django.urls import reverse
 from django_summernote.models import AbstractAttachment
 from utils.images import resize_image
 from utils.rands import new_slugify
@@ -23,12 +24,18 @@ class PostAttachment(AbstractAttachment):
             resize_image(self.file, 900, True, 70)
 
         return super_save
+    
 
+class PostManager(models.Manager):
+    def get_published(self):
+        return self.filter(is_published=True).order_by('-pk')
 
 class Post(models.Model):
     class Meta:
         verbose_name = 'Post'
         verbose_name_plural = 'Posts'
+
+    objects= PostManager()
 
     title = models.CharField(max_length= 65)
     slug = models.SlugField(
@@ -91,6 +98,12 @@ class Post(models.Model):
     )
     def __str__(self):
         return self.title
+    
+    def get_absolute_url(self):
+        if not self.is_published:
+            return reverse('blog:index')
+        return reverse('blog:post', args=(self.slug,))
+    
     
     def save(self, *args, **kwargs):
         if not self.slug:
