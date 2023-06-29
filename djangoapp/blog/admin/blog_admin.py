@@ -60,7 +60,7 @@ class PostAdmin(SummernoteModelAdmin):
     }
     autocomplete_fields = 'tags', 'category',
 
-    def link(self,obj):
+    def link(self, obj):
         if not obj.pk:
             return '-'
         url_of_post = obj.get_absolute_url()
