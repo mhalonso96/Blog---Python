@@ -13,7 +13,8 @@ def index (request):
         request,
         'blog/pages/index.html',
         {
-            'page_obj': page_obj
+            'page_obj': page_obj,
+            'page_title': 'Home -'
         }
     )
 
