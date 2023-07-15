@@ -1,27 +1,28 @@
+from typing import Any, Dict
+
 from blog.models.page_models import Page
-from django.core.paginator import Paginator
+from django.db import models
 from django.http import Http404
 from django.shortcuts import render
+from django.views.generic import DetailView
 
 
-def page (request,slug):
-    page_obj = (
-        Page.objects
-        .filter(is_published=True)
-        .filter(slug=slug)
-        .first())
+class PageDetailView(DetailView):
+    model = Page
+    template_name = 'blog/pages/page.html'
+    slug_field =  'slug'
+    context_object_name = 'page'
     
-    if page_obj is None:
-        raise Http404()
+    def get_context_data(self, **kwargs):
+        ctx =  super().get_context_data(**kwargs)
+        page = self.get_object()
+        page_title = f'{page.title} - Página -' #type: ignore
+        ctx.update({
+            'page_title': page_title
+        })
+        return ctx
+    
+    def get_queryset(self):
+        return super().get_queryset().filter(is_published= True)
 
-    page_title = f'{page_obj.title} - Página - '
-   
-    return render(
-        request,
-        'blog/pages/page.html',
-        {
-            'page': page_obj,
-            'page_title' : page_title,
-        }
-    )
 
