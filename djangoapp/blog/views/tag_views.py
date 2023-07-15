@@ -1,26 +1,17 @@
-from blog.models.post_models import Post
-from django.core.paginator import Paginator
-from django.http import Http404
-from django.shortcuts import render
+from blog.views import PostListView
 
 PER_PAGE = 9
 
-def tag (request, slug):
-    posts =Post.objects.get_published().filter(tags__slug=slug)
-    paginator = Paginator(posts, PER_PAGE)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    if len(page_obj) == 0:
-        raise Http404()
+class TagListView(PostListView):
+    allow_empty= False
 
-    page_title = f'{page_obj[0].tags.first().name} - Tags - '
-
-    return render(
-        request,
-        'blog/pages/index.html',
-        {
-            'page_obj': page_obj,
-            'page_title' : page_title,
-        }
-    )
-
+    def get_queryset(self) :
+        return super().get_queryset().filter(tags__slug=self.kwargs.get('slug'))
+    
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        page_title = (f'{self.object_list[0].tags.first().name} - Tag - ') #type: ignore
+        ctx.update({
+            'page_title': page_title
+        })
+        return ctx
